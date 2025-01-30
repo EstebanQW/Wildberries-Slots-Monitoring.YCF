@@ -7,25 +7,17 @@ from email.mime.text import MIMEText
 from datetime import datetime, timezone
 from dateutil.relativedelta import relativedelta
 
-#
-#
-#
-
-
-cookie = "_"  # Куки
-preorderID = 12345678  # Номер заказа
-toaddr_list = [
+#==========================================================#
+COOKIE = "_"  # Куки
+PREORDER_ID = 12345678  # Номер заказа
+TO_ADDR_LIST = [
     "example1@mail.ru",
     "example2@mail.ru",
 ]  # Адреса почты на которую слать письма
 
-fromaddr = "example3@mail.ru"  # Почта с которой будут отправляться письма
-mypass = "password"  # Пароль от почты для внешних приложений. Для mail.ru брать по ссылке - https://account.mail.ru/user/2-step-auth/passwords
-
-
-#
-#
-#
+FROM_ADDR = "example3@mail.ru"  # Почта с которой будут отправляться письма
+MAIL_PASSWORD = "password"  # Пароль от почты для внешних приложений. Для mail.ru брать по ссылке - https://account.mail.ru/user/2-step-auth/passwords
+#==========================================================#
 
 
 # Узнаю dateFrom (текущая дата)
@@ -51,7 +43,7 @@ payload = json.dumps(
         "params": {
             "dateFrom": dateFrom,
             "dateTo": dateTo,
-            "preorderID": preorderID,
+            "preorderID": PREORDER_ID,
         },
         "jsonrpc": "2.0",
         "id": "json-rpc_58",
@@ -69,7 +61,7 @@ headers = {
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Site": "same-site",
     "Connection": "keep-alive",
-    "Cookie": cookie,
+    "Cookie": COOKIE,
 }
 
 
@@ -86,7 +78,7 @@ def get_slots(response: requests.Response) -> None:
                 )
                 print(f"Доступных слотов = {count}")
                 if count > 0:
-                    text_message = f"Появились доступные слоты WB с бесплатной приемкой. {count} шт. Мониторил заказ {preorderID}."
+                    text_message = f"Появились доступные слоты WB с бесплатной приемкой. {count} шт. Мониторил заказ {PREORDER_ID}."
                     print(text_message)
                     print("Отправляю письмо.")
                     send_mail(find_error, text_message)
@@ -127,8 +119,8 @@ def send_mail(find_error: bool, text_message: str) -> None:
         <p><b>Все поставки:</b> <a href="https://seller.wildberries.ru/supplies-management/all-supplies">https://seller.wildberries.ru/supplies-management/all-supplies</a></p>"""
 
     msg = MIMEMultipart()
-    msg["From"] = fromaddr
-    msg["To"] = ", ".join(toaddr_list)
+    msg["From"] = FROM_ADDR
+    msg["To"] = ", ".join(TO_ADDR_LIST)
     msg["Subject"] = tema
     msg.attach(MIMEText(body, "html"))
 
@@ -136,9 +128,9 @@ def send_mail(find_error: bool, text_message: str) -> None:
     for _ in range(max_retries):
         try:
             server = smtplib.SMTP_SSL("smtp.mail.ru", 465)
-            server.login(fromaddr, mypass)
+            server.login(FROM_ADDR, MAIL_PASSWORD)
             text = msg.as_string()
-            server.sendmail(fromaddr, toaddr_list, text)
+            server.sendmail(FROM_ADDR, TO_ADDR_LIST, text)
             server.quit()
             print("Сообщение отправлено.")
             print("_____________________________________________")
