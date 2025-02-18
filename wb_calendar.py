@@ -1,13 +1,14 @@
 import json
-import requests
 import smtplib
 import time
+from datetime import datetime, timezone
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from datetime import datetime, timezone
+
+import requests
 from dateutil.relativedelta import relativedelta
 
-#==========================================================#
+# ==========================================================#
 COOKIE = "_"  # Куки
 PREORDER_ID = 12345678  # Номер заказа
 TO_ADDR_LIST = [
@@ -17,7 +18,7 @@ TO_ADDR_LIST = [
 
 FROM_ADDR = "example3@mail.ru"  # Почта с которой будут отправляться письма
 MAIL_PASSWORD = "password"  # Пароль от почты для внешних приложений. Для mail.ru брать по ссылке - https://account.mail.ru/user/2-step-auth/passwords
-#==========================================================#
+# ==========================================================#
 
 
 # Узнаю dateFrom (текущая дата)
@@ -141,7 +142,7 @@ def send_mail(find_error: bool, text_message: str) -> None:
             print(f"Ошибка при отправке письма: {e}. Повторяю отправку...")
             time.sleep(2)
     else:
-        print(f"Все попытки отправки письма не увенчались успехом. Ошибка.")
+        print("Все попытки отправки письма не увенчались успехом. Ошибка.")
     time.sleep(1)
 
 
